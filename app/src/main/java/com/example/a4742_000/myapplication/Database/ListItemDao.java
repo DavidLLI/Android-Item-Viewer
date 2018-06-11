@@ -23,6 +23,12 @@ public interface ListItemDao {
     @Query("SELECT * FROM ListItem WHERE name LIKE :name")
     LiveData<ListItem> findByName(String name);
 
+    @Query("SELECT * FROM ListItem WHERE category == :category")
+    LiveData<List<ListItem>> findByCategory(String category);
+
+    @Query("SELECT DISTINCT category FROM ListItem")
+    LiveData<List<String>> getAllCategories();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<ListItem> item);
 

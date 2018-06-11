@@ -10,15 +10,19 @@ import java.util.Map;
 public class ListItemRepository {
     private ListItemDao mListItemDao;
     private LiveData<List<ListItem>> items;
+    private LiveData<List<String>> categories;
 
     ListItemRepository(Application application) {
         AppDatabase db = AppDatabase.getInstance(application);
         mListItemDao = db.listItemDao();
         items = mListItemDao.getAll();
+        categories = mListItemDao.getAllCategories();
     }
 
+    LiveData<List<String>> getAllCategories() { return this.categories; }
+
     LiveData<List<ListItem>> getAllItems() {
-        return items;
+        return this.items;
     }
 
     public void insert (List<ListItem> items) {

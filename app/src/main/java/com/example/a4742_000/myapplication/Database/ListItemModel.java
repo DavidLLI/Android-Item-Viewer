@@ -10,12 +10,16 @@ public class ListItemModel extends AndroidViewModel {
     private ListItemRepository mRepository;
 
     private LiveData<List<ListItem>> AllItems;
+    private LiveData<List<String>> AllCategories;
 
     public ListItemModel (Application application) {
         super(application);
         mRepository = new ListItemRepository(application);
         AllItems = mRepository.getAllItems();
+        AllCategories = mRepository.getAllCategories();
     }
+
+    public LiveData<List<String>> getAllCategories() { return this.AllCategories; }
 
     public LiveData<List<ListItem>> getAllItems() {
         return AllItems;

@@ -9,17 +9,22 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.a4742_000.myapplication.Database.ListItem;
 
+import java.io.FilterReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     private List<ListItem> mDataset;
+    private List<ListItem> filteredDataset;
+    private String category;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
@@ -37,6 +42,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     // Provide a suitable constructor (depends on the kind of dataset)
     public MainAdapter() {
         mDataset = new ArrayList<ListItem>();
+        filteredDataset = new ArrayList<>();
+        category = new String();
     }
 
     // Create new views (invoked by the layout manager)
@@ -55,10 +62,10 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.mTextView.setText(mDataset.get(position).getName());
+        holder.mTextView.setText(filteredDataset.get(position).getName());
         try {
             holder.mImageView.setImageBitmap(MediaStore.Images.Media.getBitmap(holder.mImageView.getContext()
-                    .getContentResolver(), Uri.parse(mDataset.get(position).getImageUrisWrapper().get(0))));
+                    .getContentResolver(), Uri.parse(filteredDataset.get(position).getImageUrisWrapper().get(0))));
         } catch (Exception e) {
             holder.mImageView.setImageResource(R.drawable.captainamerica);
         }
@@ -69,10 +76,11 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
                 // Put in data
                 Bundle bundle = new Bundle();
-                bundle.putInt("uid", mDataset.get(position).getUid());
-                bundle.putString("name", mDataset.get(position).getName());
-                bundle.putStringArrayList("image", new ArrayList(mDataset.get(position).getImageUrisWrapper()));
-                bundle.putString("description", mDataset.get(position).getDescription());
+                bundle.putInt("uid", filteredDataset.get(position).getUid());
+                bundle.putString("category", filteredDataset.get(position).getCategory());
+                bundle.putString("name", filteredDataset.get(position).getName());
+                bundle.putStringArrayList("image", new ArrayList(filteredDataset.get(position).getImageUrisWrapper()));
+                bundle.putString("description", filteredDataset.get(position).getDescription());
                 intentBundle.putExtras(bundle);
                 ClickedView.getContext().startActivity(intentBundle);
             }
@@ -82,7 +90,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mDataset.size();
+        return filteredDataset.size();
     }
 
     @Override
@@ -90,9 +98,17 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         super.onAttachedToRecyclerView(recyclerView);
     }
 
-    public void dataChange(List<ListItem> items) {
-        mDataset = items;
+    public void dataChange(List<ListItem> items, String category) {
+        if (items != null) {
+            mDataset = items;
+        }
+        this.category = category;
+        filteredDataset.clear();
+        for (ListItem item : mDataset) {
+            if (item.getCategory().equals(category) || category == null || category.isEmpty() || category.equals("全部")) {
+                filteredDataset.add(item);
+            }
+        }
         notifyDataSetChanged();
     }
-
 }

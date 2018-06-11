@@ -7,11 +7,17 @@
 
     <TextView
         android:id="@+id/item_name_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="153dp"
+        android:layout_height="63dp"
         android:layout_gravity="top|center"
+        android:layout_marginEnd="628dp"
+        android:layout_marginStart="8dp"
         android:textColor="#000000"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.016"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/category_textview" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/edit_button"
@@ -39,11 +45,11 @@
         android:id="@+id/imageList_specific_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="136dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.016"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/item_name_id" />
 
     <TextView
         android:id="@+id/item_description_id"
@@ -58,6 +64,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageList_specific_view" />
+        app:layout_constraintTop_toBottomOf="@+id/imageList_specific_view"
+        app:layout_constraintVertical_bias="0.011" />
+
+    <TextView
+        android:id="@+id/category_textview"
+        android:layout_width="151dp"
+        android:layout_height="62dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:textColor="#000000"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.007"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

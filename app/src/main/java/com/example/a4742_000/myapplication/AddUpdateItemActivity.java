@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -15,6 +16,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -35,6 +37,8 @@ public class AddUpdateItemActivity extends AppCompatActivity {
     private EditText name_edit;
     private EditText description_edit;
     private RecyclerView images_view;
+    private AutoCompleteTextView category_view;
+    private ArrayStringAdapter categoryAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ImageListAdapter imageListAdapter;
     ListItemModel model;
@@ -49,6 +53,12 @@ public class AddUpdateItemActivity extends AppCompatActivity {
 
         setContentView(R.layout.new_item_view);
 
+        category_view = findViewById(R.id.categories_dropdown);
+        categoryAdapter = new ArrayStringAdapter(this, R.layout.my_text_view);
+        category_view.setAdapter(categoryAdapter);
+        model.getAllCategories().observe(this, (@Nullable final List<String> categories) -> {
+            categoryAdapter.updateData(categories);
+        });
         name_edit = findViewById(R.id.product_name_add);
         description_edit = findViewById(R.id.product_description_add);
         images_view = (RecyclerView) findViewById(R.id.imageList_add_view);
@@ -63,6 +73,10 @@ public class AddUpdateItemActivity extends AppCompatActivity {
 
         mItem = new ListItem();
 
+        if (getIntent().getExtras().get("category") != null) {
+            mItem.setCategory((String)getIntent().getExtras().get("category"));
+            category_view.setText(mItem.getCategory());
+        }
         if (getIntent().getExtras().get("name") != null) {
             mItem.setName((String)getIntent().getExtras().get("name"));
             name_edit.setText(mItem.getName());
@@ -100,6 +114,17 @@ public class AddUpdateItemActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 mItem.setDescription(s.toString());
             }
+        });
+
+        category_view.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) { mItem.setCategory(s.toString()); }
         });
 
         Button addPic_Button = (Button) findViewById(R.id.choose_pic_button);

@@ -15,6 +15,8 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.Spinner;
 
 import com.example.a4742_000.myapplication.Database.AppDatabase;
 import com.example.a4742_000.myapplication.Database.ListItem;
@@ -26,12 +28,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private ListItemModel mListItemViewModel;
+    private Spinner filterByCategory;
     private RecyclerView mainListView;
     private MainAdapter mainListAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-
-    // Database
-    private AppDatabase db;
 
     private static int calculateNoOfColumns(Context context) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
@@ -48,6 +48,26 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Initiate view model
+        mListItemViewModel = ViewModelProviders.of(this).get(ListItemModel.class);
+
+        filterByCategory = findViewById(R.id.category_filter_dropdown);
+        ArrayStringAdapter categoryAdapter = new ArrayStringAdapter(this, R.layout.my_text_view);
+        mListItemViewModel.getAllCategories().observe(this, (@Nullable final List<String> categories) -> {
+            categories.add(0, "全部");
+            categoryAdapter.updateData(categories);
+        });
+        filterByCategory.setAdapter(categoryAdapter);
+        filterByCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mainListAdapter.dataChange(null, parent.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
         mainListView = (RecyclerView) findViewById(R.id.MainList);
         // Performance if size does not change
         mainListView.setHasFixedSize(true);
@@ -57,18 +77,11 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new GridLayoutManager(this, numberOfColumns);
         mainListView.setLayoutManager(mLayoutManager);
 
-        // Data Block
-        db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "item_database").build();
-
         // specify an adapter (see also next example)
         mainListAdapter = new MainAdapter();
         mainListView.setAdapter(mainListAdapter);
-
-        // Initiate view model
-        mListItemViewModel = ViewModelProviders.of(this).get(ListItemModel.class);
         mListItemViewModel.getAllItems().observe(this, (@Nullable final List<ListItem> items) -> {
-            mainListAdapter.dataChange(items);
+            mainListAdapter.dataChange(items, null);
         });
 
         FloatingActionButton addButton = (FloatingActionButton) findViewById(R.id.add_button);

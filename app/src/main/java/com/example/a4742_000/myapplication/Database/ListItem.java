@@ -22,6 +22,9 @@ public class ListItem {
     @ColumnInfo( name = "description" )
     private String description;
 
+    @ColumnInfo( name = "category")
+    private String category = "其他";
+
     public ListItem() {}
 
     private String convertListOfStringtoString(List<String> sList) {
@@ -41,18 +44,22 @@ public class ListItem {
         return sList;
     }
 
-    public ListItem (int uid, String name, List<String> imageUris, String description) {
+    public ListItem (int uid, String name, List<String> imageUris, String description, String category) {
         this.uid = uid;
         this.name = name;
         this.imageUris = convertListOfStringtoString(imageUris);
         this.description = description;
+        this.category = category;
     }
 
-    public ListItem (String name, List<String> imageUris, String description) {
+    public ListItem (String name, List<String> imageUris, String description, String category) {
         this.name = name;
         this.imageUris = convertListOfStringtoString(imageUris);
         this.description = description;
+        this.category = category;
     }
+
+
 
     public void setUid(int uid) {
         this.uid = uid;
@@ -93,4 +100,8 @@ public class ListItem {
     public String getDescription() {
         return this.description;
     }
+
+    public void setCategory(String category) { this.category = category; }
+
+    public String getCategory() { return this.category; }
 }

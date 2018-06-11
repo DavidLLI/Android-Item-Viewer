@@ -30,6 +30,7 @@ public class SpecificItemActivity extends AppCompatActivity {
     private ListItem mItem;
 
     private TextView name_view;
+    private TextView category_view;
     private RecyclerView images_view;
     private RecyclerView.LayoutManager mLayoutManager;
     private ImageListAdapter imageListAdapter;
@@ -41,6 +42,7 @@ public class SpecificItemActivity extends AppCompatActivity {
         setContentView(R.layout.item_specific_view);
 
         name_view = findViewById(R.id.item_name_id);
+        category_view = findViewById(R.id.category_textview);
 
         images_view = (RecyclerView) findViewById(R.id.imageList_specific_view);
         // Performance if size does not change
@@ -58,7 +60,8 @@ public class SpecificItemActivity extends AppCompatActivity {
         String name = (String) getIntent().getExtras().get("name");
         ArrayList<String> imageUris = (ArrayList<String>) getIntent().getExtras().get("image");
         String description = (String) getIntent().getExtras().get("description");
-        mItem = new ListItem(uid, name, imageUris, description);
+        String category = (String) getIntent().getExtras().get("category");
+        mItem = new ListItem(uid, name, imageUris, description, category);
 
         AppDatabase.getInstance(getApplicationContext()).listItemDao().findById(uid).observe(this, (@Nullable final ListItem item) -> {
             this.updateData(item);
@@ -66,6 +69,7 @@ public class SpecificItemActivity extends AppCompatActivity {
 
         name_view.setText(mItem.getName());
         description_view.setText(mItem.getDescription());
+        category_view.setText(mItem.getCategory());
 
         ListItemModel model = ViewModelProviders.of(this).get(ListItemModel.class);
         AppCompatActivity mContext = this;
@@ -80,6 +84,7 @@ public class SpecificItemActivity extends AppCompatActivity {
                 bundle.putString("name", mItem.getName());
                 bundle.putStringArrayList("image", new ArrayList<String>(mItem.getImageUrisWrapper()));
                 bundle.putString("description", mItem.getDescription());
+                bundle.putString("category", mItem.getCategory());
                 intentBundle.putExtras(bundle);
                 view.getContext().startActivity(intentBundle);
             }
@@ -89,7 +94,7 @@ public class SpecificItemActivity extends AppCompatActivity {
         delete_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ListItem item = new ListItem(mItem.getUid(), mItem.getName(),mItem.getImageUrisWrapper(), mItem.getDescription());
+                ListItem item = new ListItem(mItem.getUid(), mItem.getName(),mItem.getImageUrisWrapper(), mItem.getDescription(), mItem.getCategory());
                 model.delete(item);
                 mContext.finish();
             }
